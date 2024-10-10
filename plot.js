@@ -97,6 +97,13 @@ function plot(x,y,labelX = "",labelY = "", canvasElement)
         return newImageData;
     }
 
+    function getPoint(x,y)
+    {
+        return {
+            x: 50 + ((x - minX) / (maxX - minX)) * (canvas.width - 100),
+            y: 50 + (1 - (y - minY) / (maxY - minY)) * (canvas.height - 100)
+        }
+    }
 
     function draw()
     {
@@ -122,9 +129,7 @@ function plot(x,y,labelX = "",labelY = "", canvasElement)
 
         for(let i = 0; i < x.length; i++)
         {
-            let point = {};
-            point.x = 50 + ((x[i] - minX) / (maxX - minX)) * (canvas.width - 100);
-            point.y = 50 + (1 - (y[i] - minY) / (maxY - minY)) * (canvas.height - 100);
+            let point = getPoint(x[i],y[i])
             
             ctx.fillStyle = "blue";
             ctx.beginPath();
@@ -153,18 +158,15 @@ function plot(x,y,labelX = "",labelY = "", canvasElement)
         let regression = x => a*x + b; 
         let line = 
         {
-            x1: 50 + 0 * (canvas.width - 100),
-            y1: 50 + (1 - (regression(minX) - minY) / (maxY - minY)) * (canvas.height - 100),
-
-            x2: 50 + 1 * (canvas.width - 100),
-            y2: 50 + (1 - (regression(maxX) - minY) / (maxY - minY)) * (canvas.height - 100),
+            start: getPoint(minX, regression(minX)),
+            end: getPoint(maxX, regression(maxX))
         }
-        ctx.beginPath();
-        ctx.moveTo(line.x1,line.y1);
-        ctx.lineTo(line.x2,line.y2);
-        ctx.stroke();
 
-        
+        ctx.beginPath();
+        ctx.moveTo(line.start.x, line.start.y);
+        ctx.lineTo(line.end.x, line.end.y);
+        ctx.stroke();
+      
     }
 
 
