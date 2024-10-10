@@ -155,12 +155,36 @@ function plot(x,y,labelX = "",labelY = "", canvasElement)
 
         
         let {a,b} = getLinearRegression(x,y);
-        let regression = x => a*x + b; 
+        let regression = x => a*x + b;
+        let inverseFunction = y => (y - b)/a;
+
         let line = 
         {
             start: getPoint(minX, regression(minX)),
             end: getPoint(maxX, regression(maxX))
         }
+
+        if(line.start.y < 50)
+        {
+            line.start = getPoint(inverseFunction(maxY), maxY);
+        }
+
+        if(line.end.y < 50)
+        {
+            line.end = getPoint(inverseFunction(maxY), maxY);
+        }
+
+        if(line.start.y > canvas.height - 50)
+        {
+            line.start = getPoint(inverseFunction(minY), minY);
+        }
+
+        if(line.end.y > canvas.height - 50)
+        {
+            line.end = getPoint(inverseFunction(minY), minY);
+        }
+
+        
 
         ctx.beginPath();
         ctx.moveTo(line.start.x, line.start.y);
